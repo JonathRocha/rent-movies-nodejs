@@ -1,9 +1,12 @@
 import { transformAndValidate } from 'class-transformer-validator';
+import { ValidationError } from 'class-validator';
 import { Request, Response, NextFunction } from 'express';
 
-export function validateBody<T>(c: T, whitelist = true) {
+export function validate<T>(dtoClass: T, whitelist = true) {
     return (request: Request, response: Response, next: NextFunction) => {
         const { body } = request;
+
+        console.log('yayaya', body);
 
         if (!body || !Object.keys(body).length) {
             return response
@@ -11,16 +14,22 @@ export function validateBody<T>(c: T, whitelist = true) {
                 .json({ message: 'No request body found.' });
         }
 
-        console.log(body);
-
-        transformAndValidate(c as any, body, { validator: { whitelist } })
+        transformAndValidate(dtoClass as any, body, {
+            validator: { whitelist },
+        })
             .then((transformed) => {
+                console.log({ transformed });
                 request.body = transformed;
                 next();
             })
-            .catch((err) => {
-                console.log(err);
-                response.status(400).json({ message: err.message });
+            .catch((err: ValidationError[]) => {
+                response.status(400).json({
+                    message: 'Fields validation failed.',
+                    errors: err.map((object) => {
+                        const { target, ...otherProperties } = object;
+                        return { ...otherProperties };
+                    }),
+                });
             });
     };
 }

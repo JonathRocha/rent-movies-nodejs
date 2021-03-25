@@ -1,11 +1,15 @@
 {
   "compilerOptions": { 
-    "baseUrl": "./src",              
-    "target": "es5",                             
+    "baseUrl": "./src",                  
+    "target": "ES2016",
+    "outDir": "./dist",  
+    "sourceMap": true,        
+    "moduleResolution": "node",               
     "strict": true,                    
     "esModuleInterop": true, 
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "experimentalDecorators": true 
+    "experimentalDecorators": true, 
+    "emitDecoratorMetadata": true,
   }
 }
