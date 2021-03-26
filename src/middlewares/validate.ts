@@ -7,9 +7,7 @@ export function validate<T>(dtoClass: T, whitelist = true) {
         const { body } = request;
 
         if (!body || !Object.keys(body).length) {
-            return response
-                .status(400)
-                .json({ message: 'No request body found.' });
+            return response.status(400).json({ message: 'No request body found.' });
         }
 
         transformAndValidate(dtoClass as any, body, {

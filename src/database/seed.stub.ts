@@ -11,6 +11,6 @@ export async function seed(knex: Knex): Promise<void> {
             .map(() => ({
                 username: faker.internet.userName(),
                 random_number: faker.random.number({ min: 1, max: 5 }),
-            }))
+            })),
     );
 }

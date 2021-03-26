@@ -15,7 +15,7 @@ const moviesService = new MoviesService();
 beforeAll(async (done) => {
     const application = new App(
         [new MoviesController(), new UsersController(), new RentsController()],
-        Number(process.env.SERVER_PORT ?? 3001)
+        Number(process.env.SERVER_PORT ?? 3001),
     );
     await application.listen();
     app = application.app;
@@ -89,11 +89,9 @@ describe('GET /movies', () => {
                 .map(() => ({
                     name: faker.random.words(Math.random() * (3 - 1) + 1),
                     genre: faker.random.word(),
-                    director: `${faker.name.firstName(1)} ${faker.name.lastName(
-                        1
-                    )}`,
+                    director: `${faker.name.firstName(1)} ${faker.name.lastName(1)}`,
                     quantity: Math.ceil(Math.random() * (3 - 1) + 1),
-                }))
+                })),
         );
 
         request(app)

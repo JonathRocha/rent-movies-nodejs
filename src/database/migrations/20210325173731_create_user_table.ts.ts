@@ -14,10 +14,7 @@ export async function up(knex: Knex): Promise<void> {
             table.string('document', 11).notNullable().unique();
             table.string('gender', 45).notNullable();
             table.timestamp('birthday').notNullable();
-            table
-                .timestamp('created_at')
-                .notNullable()
-                .defaultTo(knex.raw('CURRENT_TIMESTAMP'));
+            table.timestamp('created_at').notNullable().defaultTo(knex.raw('CURRENT_TIMESTAMP'));
             table.timestamp('updated_at').nullable().defaultTo(null);
             table.timestamp('deleted_at').nullable().defaultTo(null);
         });

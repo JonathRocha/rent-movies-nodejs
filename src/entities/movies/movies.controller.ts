@@ -23,19 +23,11 @@ export default class MoviesController extends BaseController {
         this.router.get(`${this.path}/histories`, this.historyList.bind(this));
         this.router.get(`${this.path}/:id`, this.getById.bind(this));
         this.router.get(`${this.path}/:id/history`, this.history.bind(this));
-        this.router.patch(
-            `${this.path}/:id`,
-            validate(MovieUpdate),
-            this.update.bind(this)
-        );
+        this.router.patch(`${this.path}/:id`, validate(MovieUpdate), this.update.bind(this));
         this.router.delete(`${this.path}/:id`, this.delete.bind(this));
     }
 
-    private create = (
-        request: Request,
-        response: Response,
-        next: NextFunction
-    ) => {
+    private create = (request: Request, response: Response, next: NextFunction) => {
         const { body } = request;
 
         return this.moviesService
@@ -44,31 +36,25 @@ export default class MoviesController extends BaseController {
             .catch(next);
     };
 
-    private list = (
-        request: Request,
-        response: Response,
-        next: NextFunction
-    ) => {
+    private list = (request: Request, response: Response, next: NextFunction) => {
         let { limit, page } = request.query;
 
         if (limit || page) {
             if (Number.isNaN(Number(limit)) || Number(limit) < 1) {
                 return response.status(400).json({
-                    message:
-                        'Limit query param invalid. Must be a number greater than zero.',
+                    message: 'Limit query param invalid. Must be a number greater than zero.',
                 });
             }
 
             if (Number.isNaN(Number(page)) || Number(page) < 1) {
                 return response.status(400).json({
-                    message:
-                        'Page query param invalid. Must be a number greater than zero.',
+                    message: 'Page query param invalid. Must be a number greater than zero.',
                 });
             }
         }
 
         const params = Object.keys(request.query).filter(
-            (param) => !['limit', 'page'].includes(param)
+            (param) => !['limit', 'page'].includes(param),
         );
         if (params.length) {
             return response.status(400).json({
@@ -82,17 +68,11 @@ export default class MoviesController extends BaseController {
             .catch(next);
     };
 
-    private getById = (
-        request: Request,
-        response: Response,
-        next: NextFunction
-    ) => {
+    private getById = (request: Request, response: Response, next: NextFunction) => {
         const { id } = request.params;
 
         if (Number.isNaN(Number(id))) {
-            return response
-                .status(400)
-                .json({ message: `Invalid value for param id: ${id}` });
+            return response.status(400).json({ message: `Invalid value for param id: ${id}` });
         }
 
         return this.moviesService
@@ -101,17 +81,11 @@ export default class MoviesController extends BaseController {
             .catch(next);
     };
 
-    private history = (
-        request: Request,
-        response: Response,
-        next: NextFunction
-    ) => {
+    private history = (request: Request, response: Response, next: NextFunction) => {
         const { id } = request.params;
 
         if (Number.isNaN(Number(id))) {
-            return response
-                .status(400)
-                .json({ message: `Invalid value for param id: ${id}` });
+            return response.status(400).json({ message: `Invalid value for param id: ${id}` });
         }
 
         let { limit, page } = request.query;
@@ -119,21 +93,19 @@ export default class MoviesController extends BaseController {
         if (limit || page) {
             if (Number.isNaN(Number(limit)) || Number(limit) < 1) {
                 return response.status(400).json({
-                    message:
-                        'Limit query param invalid. Must be a number greater than zero.',
+                    message: 'Limit query param invalid. Must be a number greater than zero.',
                 });
             }
 
             if (Number.isNaN(Number(page)) || Number(page) < 1) {
                 return response.status(400).json({
-                    message:
-                        'Page query param invalid. Must be a number greater than zero.',
+                    message: 'Page query param invalid. Must be a number greater than zero.',
                 });
             }
         }
 
         const params = Object.keys(request.query).filter(
-            (param) => !['limit', 'page'].includes(param)
+            (param) => !['limit', 'page'].includes(param),
         );
         if (params.length) {
             return response.status(400).json({
@@ -142,40 +114,30 @@ export default class MoviesController extends BaseController {
         }
 
         return this.moviesService
-            .getHistoryByMovie(
-                Number(id),
-                Number(limit ?? 10),
-                Number(page ?? 1)
-            )
+            .getHistoryByMovie(Number(id), Number(limit ?? 10), Number(page ?? 1))
             .then((data) => response.status(200).json(data))
             .catch(next);
     };
 
-    private historyList = (
-        request: Request,
-        response: Response,
-        next: NextFunction
-    ) => {
+    private historyList = (request: Request, response: Response, next: NextFunction) => {
         let { limit, page } = request.query;
 
         if (limit || page) {
             if (Number.isNaN(Number(limit)) || Number(limit) < 1) {
                 return response.status(400).json({
-                    message:
-                        'Limit query param invalid. Must be a number greater than zero.',
+                    message: 'Limit query param invalid. Must be a number greater than zero.',
                 });
             }
 
             if (Number.isNaN(Number(page)) || Number(page) < 1) {
                 return response.status(400).json({
-                    message:
-                        'Page query param invalid. Must be a number greater than zero.',
+                    message: 'Page query param invalid. Must be a number greater than zero.',
                 });
             }
         }
 
         const params = Object.keys(request.query).filter(
-            (param) => !['limit', 'page'].includes(param)
+            (param) => !['limit', 'page'].includes(param),
         );
         if (params.length) {
             return response.status(400).json({
@@ -189,18 +151,12 @@ export default class MoviesController extends BaseController {
             .catch(next);
     };
 
-    private update = (
-        request: Request,
-        response: Response,
-        next: NextFunction
-    ) => {
+    private update = (request: Request, response: Response, next: NextFunction) => {
         const { id } = request.params;
         const { body } = request;
 
         if (Number.isNaN(Number(id))) {
-            return response
-                .status(400)
-                .json({ message: `Invalid value for param id: ${id}` });
+            return response.status(400).json({ message: `Invalid value for param id: ${id}` });
         }
 
         return this.moviesService
@@ -209,17 +165,11 @@ export default class MoviesController extends BaseController {
             .catch(next);
     };
 
-    private delete = (
-        request: Request,
-        response: Response,
-        next: NextFunction
-    ) => {
+    private delete = (request: Request, response: Response, next: NextFunction) => {
         const { id } = request.params;
 
         if (Number.isNaN(Number(id))) {
-            return response
-                .status(400)
-                .json({ message: `Invalid value for param id: ${id}` });
+            return response.status(400).json({ message: `Invalid value for param id: ${id}` });
         }
 
         return this.moviesService

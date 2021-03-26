@@ -5,7 +5,7 @@ export const errorHandler = (
     error: HttpException,
     _request: Request,
     response: Response,
-    _next: NextFunction
+    _next: NextFunction,
 ) => {
     const isInternalError = !(error instanceof HttpException);
     if (isInternalError) {

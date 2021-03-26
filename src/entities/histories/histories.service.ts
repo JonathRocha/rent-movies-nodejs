@@ -17,10 +17,7 @@ export default class HistoriesService extends BaseService {
     }
 
     create(history: HistoryCreation, transaction?: Knex.Transaction) {
-        return (transaction
-            ? transaction('rent_history')
-            : this.db('rent_history')
-        )
+        return (transaction ? transaction('rent_history') : this.db('rent_history'))
             .insert(history)
             .returning<MovieHistory>('*');
     }
@@ -77,9 +74,7 @@ export default class HistoriesService extends BaseService {
             });
     }
 
-    findByMovieAndUser(
-        params: FindByMovieAndUserParams
-    ): Promise<MovieHistory[]> {
+    findByMovieAndUser(params: FindByMovieAndUserParams): Promise<MovieHistory[]> {
         const { movie_id, user_id, shouldFilterActives = false } = params;
 
         return this.db('rent as r')
@@ -107,12 +102,7 @@ export default class HistoriesService extends BaseService {
     }
 
     async listByMovie(params: ListByMovieParams) {
-        const {
-            movie_id,
-            limit = 10,
-            page = 1,
-            shouldFilterActives = false,
-        } = params;
+        const { movie_id, limit = 10, page = 1, shouldFilterActives = false } = params;
 
         const builder = this.db('rent as r')
             .join('rent_history as rh', 'r.id', '=', 'rh.rent_id')
@@ -152,8 +142,8 @@ export default class HistoriesService extends BaseService {
                     `The movie "${history.movieName}" was ${
                         history.action === 'rent' ? 'rented' : 'renewed'
                     } by "${history.username}" on ${DateTime.fromJSDate(
-                        history.created_at
-                    ).toFormat('MM/dd/yyyy')}.`
+                        history.created_at,
+                    ).toFormat('MM/dd/yyyy')}.`,
             ),
             total: Number(count?.total ?? 0),
             perPage: limit,
@@ -199,8 +189,8 @@ export default class HistoriesService extends BaseService {
                     `The movie "${history.movieName}" was ${
                         history.action === 'rent' ? 'rented' : 'renewed'
                     } by "${history.username}" on ${DateTime.fromJSDate(
-                        history.created_at
-                    ).toFormat('MM/dd/yyyy')}.`
+                        history.created_at,
+                    ).toFormat('MM/dd/yyyy')}.`,
             ),
             total: Number(count?.total ?? 0),
             perPage: limit,

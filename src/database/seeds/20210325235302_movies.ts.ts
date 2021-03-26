@@ -11,10 +11,8 @@ export async function seed(knex: Knex): Promise<void> {
             .map(() => ({
                 name: faker.random.words(Math.random() * (3 - 1) + 1),
                 genre: faker.random.word(),
-                director: `${faker.name.firstName(1)} ${faker.name.lastName(
-                    1
-                )}`,
+                director: `${faker.name.firstName(1)} ${faker.name.lastName(1)}`,
                 quantity: Math.ceil(Math.random() * (3 - 1) + 1),
-            }))
+            })),
     );
 }

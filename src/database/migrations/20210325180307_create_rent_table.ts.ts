@@ -18,10 +18,7 @@ export async function up(knex: Knex): Promise<void> {
             table.foreign('user_id').references('user.id');
             table.timestamp('return_date').notNullable();
             table.integer('returned', 1).defaultTo(0);
-            table
-                .timestamp('created_at')
-                .notNullable()
-                .defaultTo(knex.raw('CURRENT_TIMESTAMP'));
+            table.timestamp('created_at').notNullable().defaultTo(knex.raw('CURRENT_TIMESTAMP'));
             table.timestamp('updated_at').nullable().defaultTo(null);
             table.timestamp('deleted_at').nullable().defaultTo(null);
         });

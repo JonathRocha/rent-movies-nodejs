@@ -5,7 +5,7 @@ import RentsController from './entities/rents/rents.controller';
 
 const app = new App(
     [new MoviesController(), new UsersController(), new RentsController()],
-    Number(process.env.SERVER_PORT ?? 3001)
+    Number(process.env.SERVER_PORT ?? 3001),
 );
 
 app.listen();

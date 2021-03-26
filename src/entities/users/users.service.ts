@@ -10,9 +10,7 @@ export default class UsersService extends BaseService {
 
     async save(user: User): Promise<UserEntity> {
         try {
-            const [insertedUser] = await this.db('user')
-                .insert(user)
-                .returning<UserEntity[]>('*');
+            const [insertedUser] = await this.db('user').insert(user).returning<UserEntity[]>('*');
             return insertedUser;
         } catch (error) {
             if ('detail' in error && /already exists/.test(error.detail)) {

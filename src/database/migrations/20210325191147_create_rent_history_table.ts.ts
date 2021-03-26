@@ -12,10 +12,7 @@ export async function up(knex: Knex): Promise<void> {
             table.bigInteger('rent_id').notNullable();
             table.foreign('rent_id').references('rent.id');
             table.string('action', 5).notNullable();
-            table
-                .timestamp('created_at')
-                .notNullable()
-                .defaultTo(knex.raw('CURRENT_TIMESTAMP'));
+            table.timestamp('created_at').notNullable().defaultTo(knex.raw('CURRENT_TIMESTAMP'));
         });
 
         await createUpdateTimestampTrigger(knex, tableName, 'updated_at');

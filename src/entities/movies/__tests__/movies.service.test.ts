@@ -73,11 +73,9 @@ describe('MoviesService', () => {
                 .map(() => ({
                     name: faker.random.words(Math.random() * (3 - 1) + 1),
                     genre: faker.random.word(),
-                    director: `${faker.name.firstName(1)} ${faker.name.lastName(
-                        1
-                    )}`,
+                    director: `${faker.name.firstName(1)} ${faker.name.lastName(1)}`,
                     quantity: Math.ceil(Math.random() * (3 - 1) + 1),
-                }))
+                })),
         );
 
         const data = await moviesService.findAll(10, 2);
@@ -139,10 +137,7 @@ describe('MoviesService', () => {
         const update = new MovieUpdate();
         update.name = 'New Name Wow';
 
-        const { movie: updated } = await moviesService.updateById(
-            Number(data.id),
-            update
-        );
+        const { movie: updated } = await moviesService.updateById(Number(data.id), update);
 
         expect(updated).not.toBe(null);
         expect(updated).not.toBe(undefined);
@@ -207,20 +202,14 @@ describe('MoviesService', () => {
         const insertedRent = await rentsService.save(rent);
         expect(insertedRent?.id).not.toBe(undefined);
 
-        const {
-            histories,
-            perPage,
-            total,
-        } = await moviesService.getHistoryByMovie(
+        const { histories, perPage, total } = await moviesService.getHistoryByMovie(
             Number(insertedRent.movie_id),
             5,
-            1
+            1,
         );
 
         expect(Array.isArray(histories) && histories.length === 1).toBe(true);
-        expect(
-            /John/.test(histories[0]) && /Star Wars/.test(histories[0])
-        ).toBe(true);
+        expect(/John/.test(histories[0]) && /Star Wars/.test(histories[0])).toBe(true);
         expect(perPage).toBe(5);
         expect(total).toBe(1);
 

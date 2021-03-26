@@ -1,11 +1,4 @@
-import {
-    IsInt,
-    IsISO8601,
-    IsOptional,
-    Max,
-    Min,
-    Validate,
-} from 'class-validator';
+import { IsInt, IsISO8601, IsOptional, Max, Min, Validate } from 'class-validator';
 import { IsNotPastDate } from '../../utils/customValidations';
 
 export class Rent {

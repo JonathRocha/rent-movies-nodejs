@@ -47,18 +47,14 @@ export default class RentsService extends BaseService {
 
         if (
             activeRentHistoriesByUser.length &&
-            activeRentHistoriesByUser.filter(
-                (history) => history.action === 'rent'
-            ).length === 5
+            activeRentHistoriesByUser.filter((history) => history.action === 'rent').length === 5
         ) {
             throw new HttpException(400, 'User already have rented 5 movies');
         }
 
         if (
             movie.quantity ===
-            activeRentHistoriesByMovie.filter(
-                (history) => history.action === 'rent'
-            ).length
+            activeRentHistoriesByMovie.filter((history) => history.action === 'rent').length
         ) {
             throw new HttpException(400, 'Movie out of stock.');
         }
@@ -75,7 +71,7 @@ export default class RentsService extends BaseService {
                         rent_id: insertedRent.id,
                         action: 'rent',
                     },
-                    transaction
+                    transaction,
                 );
 
                 transaction.commit();
@@ -85,9 +81,7 @@ export default class RentsService extends BaseService {
                 throw error;
             }
         } else {
-            const [insertedRent] = await this.db('rent')
-                .insert(rent)
-                .returning<RentEntity[]>('*');
+            const [insertedRent] = await this.db('rent').insert(rent).returning<RentEntity[]>('*');
 
             await this.historiesService.create({
                 rent_id: insertedRent.id,
@@ -101,22 +95,14 @@ export default class RentsService extends BaseService {
     async renewById(id: number, days: number): Promise<{ rent: RentEntity }> {
         const rent = await this.checkIfResourceExists(id);
 
-        const activeRentHistories = await this.historiesService.findByMovieAndUser(
-            {
-                movie_id: rent.movie_id,
-                user_id: rent.user_id,
-                shouldFilterActives: true,
-            }
-        );
+        const activeRentHistories = await this.historiesService.findByMovieAndUser({
+            movie_id: rent.movie_id,
+            user_id: rent.user_id,
+            shouldFilterActives: true,
+        });
 
-        if (
-            activeRentHistories.filter((history) => history.action === 'renew')
-                .length === 2
-        ) {
-            throw new HttpException(
-                400,
-                'You have already renewed this movie twice.'
-            );
+        if (activeRentHistories.filter((history) => history.action === 'renew').length === 2) {
+            throw new HttpException(400, 'You have already renewed this movie twice.');
         }
 
         if (process.env.NODE_ENV !== 'test') {
@@ -135,7 +121,7 @@ export default class RentsService extends BaseService {
                             rent_id: rent.id,
                             action: 'renew',
                         },
-                        transaction
+                        transaction,
                     ),
                 ]);
 
@@ -184,10 +170,7 @@ export default class RentsService extends BaseService {
         };
     }
 
-    async updateById(
-        id: number,
-        update: RentUpdate
-    ): Promise<{ rent: RentEntity }> {
+    async updateById(id: number, update: RentUpdate): Promise<{ rent: RentEntity }> {
         await this.checkIfResourceExists(id);
 
         await this.db('rent')

@@ -74,9 +74,7 @@ export default class MoviesService extends BaseService {
 
     async deleteById(id: number) {
         await this.checkIfResourceExists(id);
-        return this.db('movie')
-            .update({ deleted_at: new Date() })
-            .where({ id });
+        return this.db('movie').update({ deleted_at: new Date() }).where({ id });
     }
 
     private async checkIfResourceExists(id: number): Promise<MovieEntity> {

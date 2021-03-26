@@ -6,7 +6,7 @@ let _connection: Knex;
 export function createUpdateTimestampTrigger(
     knexInstance: Knex,
     tableName: string,
-    field: string
+    field: string,
 ): Knex.Raw<any> {
     return knexInstance.raw(`
         CREATE TRIGGER auto_update_${field}

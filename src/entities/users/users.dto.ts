@@ -1,10 +1,4 @@
-import {
-    IsEmail,
-    IsISO8601,
-    IsOptional,
-    IsString,
-    Validate,
-} from 'class-validator';
+import { IsEmail, IsISO8601, IsOptional, IsString, Validate } from 'class-validator';
 import { IsValidDocument, IsOverage } from '../../utils/customValidations';
 
 export class User {
