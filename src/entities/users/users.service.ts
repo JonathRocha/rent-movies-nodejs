@@ -27,9 +27,8 @@ export default class UsersService extends BaseService {
         return { users, total: Number(count?.total ?? 0), perPage: limit };
     }
 
-    async findById(id: number) {
-        const user = await this.checkIfResourceExists(id);
-        return { user };
+    async findById(id: number): Promise<{ user: UserEntity }> {
+        return { user: await this.checkIfResourceExists(id) };
     }
 
     async updateById(id: number, update: UserUpdate) {
@@ -39,13 +38,7 @@ export default class UsersService extends BaseService {
             .update({ ...update })
             .where({ id });
 
-        const user = await this.db('user')
-            .select<UserEntity>('*')
-            .where({ id })
-            .whereNull('deleted_at')
-            .first();
-
-        return { user };
+        return this.findById(id);
     }
 
     async deleteById(id: number) {
@@ -53,7 +46,7 @@ export default class UsersService extends BaseService {
         return this.db('user').update({ deleted_at: new Date() }).where({ id });
     }
 
-    private async checkIfResourceExists(id: number) {
+    private async checkIfResourceExists(id: number): Promise<UserEntity> {
         const user = await this.db('user')
             .select<UserEntity>('*')
             .where({ id })

@@ -2,10 +2,15 @@ import { Movie, MovieUpdate } from './movies.dto';
 import { MovieEntity } from './types';
 import HttpException from '../../exceptions/HttpException';
 import BaseService from '../../base/base.service';
+import HistoriesService from '../histories/histories.service';
 
 export default class MoviesService extends BaseService {
+    private readonly historiesService: HistoriesService;
+
     constructor() {
         super();
+
+        this.historiesService = new HistoriesService();
     }
 
     save(movie: Movie): Promise<MovieEntity> {
@@ -28,8 +33,23 @@ export default class MoviesService extends BaseService {
     }
 
     async findById(id: number): Promise<{ movie: MovieEntity }> {
-        const movie = await this.checkIfResourceExists(id);
-        return { movie };
+        return { movie: await this.checkIfResourceExists(id) };
+    }
+
+    async getHistoryByMovie(id: number, limit: number, page: number) {
+        await this.checkIfResourceExists(id);
+        return this.historiesService.listByMovie({
+            movie_id: id,
+            limit,
+            page,
+        });
+    }
+
+    async getHistory(limit: number, page: number) {
+        return this.historiesService.listAll({
+            limit,
+            page,
+        });
     }
 
     async updateById(id: number, update: MovieUpdate) {
@@ -39,13 +59,7 @@ export default class MoviesService extends BaseService {
             .update({ ...update })
             .where({ id });
 
-        const movie = await this.db('movie')
-            .select<MovieEntity>('*')
-            .where({ id })
-            .whereNull('deleted_at')
-            .first();
-
-        return { movie };
+        return this.findById(id);
     }
 
     async deleteById(id: number) {

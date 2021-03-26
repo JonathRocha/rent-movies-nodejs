@@ -6,8 +6,6 @@ export function validate<T>(dtoClass: T, whitelist = true) {
     return (request: Request, response: Response, next: NextFunction) => {
         const { body } = request;
 
-        console.log('yayaya', body);
-
         if (!body || !Object.keys(body).length) {
             return response
                 .status(400)

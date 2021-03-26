@@ -8,6 +8,9 @@ export async function up(knex: Knex): Promise<void> {
 
     if (!exists) {
         await knex.schema.createTable(tableName, (table) => {
+            /**
+             * TODO: change database relation, create a tables rent_user and rent_movie with foreign keys
+             */
             table.bigIncrements('id').primary();
             table.bigInteger('movie_id').notNullable();
             table.foreign('movie_id').references('movie.id');

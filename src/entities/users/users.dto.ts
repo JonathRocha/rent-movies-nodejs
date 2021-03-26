@@ -1,11 +1,11 @@
 import {
-    IsDate,
     IsEmail,
+    IsISO8601,
     IsOptional,
     IsString,
     Validate,
 } from 'class-validator';
-import { CustomDocument } from 'utils/validateUserDocument';
+import { IsValidDocument, IsOverage } from 'utils/customValidations';
 
 export class User {
     @IsString()
@@ -15,14 +15,15 @@ export class User {
     gender!: string;
 
     @IsString()
-    @Validate(CustomDocument)
+    @Validate(IsValidDocument)
     document!: string;
 
     @IsString()
     @IsEmail()
     email!: string;
 
-    @IsDate()
+    @IsISO8601()
+    @Validate(IsOverage)
     birthday!: Date;
 }
 
@@ -36,7 +37,7 @@ export class UserUpdate {
     gender!: string;
 
     @IsString()
-    @Validate(CustomDocument)
+    @Validate(IsValidDocument)
     @IsOptional()
     document!: string;
 
@@ -45,7 +46,8 @@ export class UserUpdate {
     @IsOptional()
     email!: string;
 
-    @IsDate()
+    @IsISO8601()
+    @Validate(IsOverage)
     @IsOptional()
     birthday!: Date;
 }

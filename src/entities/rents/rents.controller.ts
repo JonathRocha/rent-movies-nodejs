@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction, Router } from 'express';
-import { Rent, RentUpdate } from './rents.dto';
+import { Rent, RentRenew, RentUpdate } from './rents.dto';
 import RentsService from './rents.service';
 import BaseController from '../../base/base.controller';
 import { validate } from '../../middlewares/validate';
@@ -20,6 +20,11 @@ export default class RentsController extends BaseController {
     private intializeRoutes() {
         this.router.get(this.path, this.list.bind(this));
         this.router.post(this.path, validate(Rent), this.create.bind(this));
+        this.router.post(
+            `${this.path}/:id/renew`,
+            validate(RentRenew),
+            this.renew.bind(this)
+        );
         this.router.get(`${this.path}/:id`, this.getById.bind(this));
         this.router.patch(
             `${this.path}/:id`,
@@ -39,6 +44,26 @@ export default class RentsController extends BaseController {
         return this.rentsService
             .save(body)
             .then((data) => response.status(201).json(data))
+            .catch(next);
+    };
+
+    private renew = (
+        request: Request,
+        response: Response,
+        next: NextFunction
+    ) => {
+        const { id } = request.params;
+        const { days } = request.body;
+
+        if (Number.isNaN(Number(id))) {
+            return response
+                .status(400)
+                .json({ message: `Invalid value for param id: ${id}` });
+        }
+
+        return this.rentsService
+            .renewById(Number(id), days)
+            .then((data) => response.status(200).json(data))
             .catch(next);
     };
 

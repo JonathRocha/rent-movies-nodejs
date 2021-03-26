@@ -20,7 +20,9 @@ export default class MoviesController extends BaseController {
     private intializeRoutes() {
         this.router.get(this.path, this.list.bind(this));
         this.router.post(this.path, validate(Movie), this.create.bind(this));
+        this.router.get(`${this.path}/histories`, this.historyList.bind(this));
         this.router.get(`${this.path}/:id`, this.getById.bind(this));
+        this.router.get(`${this.path}/:id/history`, this.history.bind(this));
         this.router.patch(
             `${this.path}/:id`,
             validate(MovieUpdate),
@@ -95,6 +97,94 @@ export default class MoviesController extends BaseController {
 
         return this.moviesService
             .findById(Number(id))
+            .then((data) => response.status(200).json(data))
+            .catch(next);
+    };
+
+    private history = (
+        request: Request,
+        response: Response,
+        next: NextFunction
+    ) => {
+        const { id } = request.params;
+
+        if (Number.isNaN(Number(id))) {
+            return response
+                .status(400)
+                .json({ message: `Invalid value for param id: ${id}` });
+        }
+
+        let { limit, page } = request.query;
+
+        if (limit || page) {
+            if (Number.isNaN(Number(limit)) && Number(limit) > 0) {
+                return response.status(400).json({
+                    message:
+                        'Limit query param invalid. Must be a number greater than zero.',
+                });
+            }
+
+            if (Number.isNaN(Number(page)) && Number(page) > 0) {
+                return response.status(400).json({
+                    message:
+                        'Page query param invalid. Must be a number greater than zero.',
+                });
+            }
+        }
+
+        const params = Object.keys(request.query).filter(
+            (param) => !['limit', 'page'].includes(param)
+        );
+        if (params.length) {
+            return response.status(400).json({
+                message: `Unrecognized query params: ${params.join(', ')}`,
+            });
+        }
+
+        return this.moviesService
+            .getHistoryByMovie(
+                Number(id),
+                Number(limit ?? 10),
+                Number(page ?? 1)
+            )
+            .then((data) => response.status(200).json(data))
+            .catch(next);
+    };
+
+    private historyList = (
+        request: Request,
+        response: Response,
+        next: NextFunction
+    ) => {
+        let { limit, page } = request.query;
+
+        if (limit || page) {
+            if (Number.isNaN(Number(limit)) && Number(limit) > 0) {
+                return response.status(400).json({
+                    message:
+                        'Limit query param invalid. Must be a number greater than zero.',
+                });
+            }
+
+            if (Number.isNaN(Number(page)) && Number(page) > 0) {
+                return response.status(400).json({
+                    message:
+                        'Page query param invalid. Must be a number greater than zero.',
+                });
+            }
+        }
+
+        const params = Object.keys(request.query).filter(
+            (param) => !['limit', 'page'].includes(param)
+        );
+        if (params.length) {
+            return response.status(400).json({
+                message: `Unrecognized query params: ${params.join(', ')}`,
+            });
+        }
+
+        return this.moviesService
+            .getHistory(Number(limit ?? 10), Number(page ?? 1))
             .then((data) => response.status(200).json(data))
             .catch(next);
     };
