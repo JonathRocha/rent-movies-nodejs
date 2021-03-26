@@ -12,6 +12,12 @@ Start docker databse with:
 ```
 docker-compose up -d
 ```
+
+Run migrations and seeds:
+```
+npx knex migrate:latest && npx knex seed:run
+```
+
 To start projet or run test, use the following commands respectively:
 ```
 yarn dev 
