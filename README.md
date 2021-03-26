@@ -1,6 +1,6 @@
 # Rent Movies Node.JS
 
-To run this project, you'll need: [Node.JS](https://nodejs.org/en/) LTS, [Yarn](https://yarnpkg.com/) or Npm, [Docker](https://docs.docker.com/engine/) withdocker-compose installed.
+To run this project, you'll need: [Node.JS](https://nodejs.org/en/) LTS, [Yarn](https://yarnpkg.com/) or Npm, [Docker](https://docs.docker.com/engine/) with docker-compose installed.
 
 First install dependencies running the following commands on projet root:
 ```
