@@ -50,14 +50,14 @@ export default class UsersController extends BaseController {
         let { limit, page } = request.query;
 
         if (limit || page) {
-            if (Number.isNaN(Number(limit)) && Number(limit) > 0) {
+            if (Number.isNaN(Number(limit)) || Number(limit) < 1) {
                 return response.status(400).json({
                     message:
                         'Limit query param invalid. Must be a number greater than zero.',
                 });
             }
 
-            if (Number.isNaN(Number(page)) && Number(page) > 0) {
+            if (Number.isNaN(Number(page)) || Number(page) < 1) {
                 return response.status(400).json({
                     message:
                         'Page query param invalid. Must be a number greater than zero.',

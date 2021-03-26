@@ -1,5 +1,5 @@
 import { Knex } from 'knex';
-import { getDbInstance } from 'utils/database';
+import { getDbInstance } from '../utils/database';
 
 export default class BaseService {
     public db: Knex;

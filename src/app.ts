@@ -1,4 +1,10 @@
-import express, { Application } from 'express';
+import express, {
+    Application,
+    ErrorRequestHandler,
+    NextFunction,
+    Request,
+    Response,
+} from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
 import BaseController from './base/base.controller';
@@ -33,9 +39,13 @@ class App {
         });
     }
 
-    public listen() {
-        this.app.listen(this.port, () => {
-            console.info(`Server is running on port ${this.port}`);
+    public listen(): Promise<void> {
+        return new Promise((resolve) => {
+            this.app.listen(this.port, () => {
+                if (process.env.NODE_ENV !== 'test')
+                    console.info(`Server is running on port ${this.port}`);
+                resolve();
+            });
         });
     }
 }

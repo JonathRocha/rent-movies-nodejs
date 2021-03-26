@@ -12,7 +12,7 @@ export async function up(knex: Knex): Promise<void> {
             table.string('name', 100).notNullable();
             table.string('email', 100).notNullable().unique();
             table.string('document', 11).notNullable().unique();
-            table.string('gender', 30).notNullable();
+            table.string('gender', 45).notNullable();
             table.timestamp('birthday').notNullable();
             table
                 .timestamp('created_at')

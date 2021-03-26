@@ -114,8 +114,8 @@ export default class HistoriesService extends BaseService {
             shouldFilterActives = false,
         } = params;
 
-        const builder = this.db('rent_history as rh')
-            .join('rent as r', 'r.id', '=', 'rh.rent_id')
+        const builder = this.db('rent as r')
+            .join('rent_history as rh', 'r.id', '=', 'rh.rent_id')
             .join('user as u', 'r.user_id', '=', 'u.id')
             .join('movie as m', 'r.movie_id', '=', 'm.id')
             .where({
@@ -130,24 +130,21 @@ export default class HistoriesService extends BaseService {
             })
             .orderBy('rh.created_at', 'desc');
 
-        const [histories, count] = await Promise.all([
-            builder
-                .select<MovieHistoryToList[]>([
-                    'u.name as username',
-                    'm.name as movieName',
-                    'rh.action',
-                    'rh.created_at',
-                ])
-                .offset(page * limit - limit)
-                .limit(limit ?? 10),
+        const histories = await builder
+            .select<MovieHistoryToList[]>([
+                'u.name as username',
+                'm.name as movieName',
+                'rh.action',
+                'rh.created_at',
+            ])
+            .offset(page * limit - limit)
+            .limit(limit ?? 10);
 
-            builder
-                .clone()
-                .clearSelect()
-                .clearOrder()
-                .count<{ total: number }>('r.id', { as: 'total' })
-                .first(),
-        ]);
+        const count = await this.db('rent_history as rh')
+            .join('rent as r', 'r.id', '=', 'rh.rent_id')
+            .where('r.movie_id', '=', movie_id)
+            .count<{ total: number }>('r.id', { as: 'total' })
+            .first();
 
         return {
             histories: histories.map(
@@ -181,24 +178,20 @@ export default class HistoriesService extends BaseService {
             })
             .orderBy('rh.created_at', 'desc');
 
-        const [histories, count] = await Promise.all([
-            builder
-                .select<MovieHistoryToList[]>([
-                    'u.name as username',
-                    'm.name as movieName',
-                    'rh.action',
-                    'rh.created_at',
-                ])
-                .offset(page * limit - limit)
-                .limit(limit ?? 10),
+        const histories = await builder
+            .select<MovieHistoryToList[]>([
+                'u.name as username',
+                'm.name as movieName',
+                'rh.action',
+                'rh.created_at',
+            ])
+            .offset(page * limit - limit)
+            .limit(limit ?? 10);
 
-            builder
-                .clone()
-                .clearSelect()
-                .clearOrder()
-                .count<{ total: number }>('r.id', { as: 'total' })
-                .first(),
-        ]);
+        const count = await this.db('rent_history as rh')
+            .join('rent as r', 'r.id', '=', 'rh.rent_id')
+            .count<{ total: number }>('r.id', { as: 'total' })
+            .first();
 
         return {
             histories: histories.map(

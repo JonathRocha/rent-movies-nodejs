@@ -1,6 +1,6 @@
-import HttpException from 'exceptions/HttpException';
 import { UserEntity } from './types';
 import { User, UserUpdate } from './users.dto';
+import HttpException from '../../exceptions/HttpException';
 import BaseService from '../../base/base.service';
 
 export default class UsersService extends BaseService {
@@ -8,8 +8,18 @@ export default class UsersService extends BaseService {
         super();
     }
 
-    save(user: User): Promise<UserEntity> {
-        return this.db('user').insert(user).returning<UserEntity>('*');
+    async save(user: User): Promise<UserEntity> {
+        try {
+            const [insertedUser] = await this.db('user')
+                .insert(user)
+                .returning<UserEntity[]>('*');
+            return insertedUser;
+        } catch (error) {
+            if ('detail' in error && /already exists/.test(error.detail)) {
+                throw new HttpException(400, `User already registered.`);
+            }
+            throw error;
+        }
     }
 
     async findAll(limit: number, page: number = 1) {

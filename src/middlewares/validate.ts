@@ -16,7 +16,6 @@ export function validate<T>(dtoClass: T, whitelist = true) {
             validator: { whitelist },
         })
             .then((transformed) => {
-                console.log({ transformed });
                 request.body = transformed;
                 next();
             })

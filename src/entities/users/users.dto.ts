@@ -5,7 +5,7 @@ import {
     IsString,
     Validate,
 } from 'class-validator';
-import { IsValidDocument, IsOverage } from 'utils/customValidations';
+import { IsValidDocument, IsOverage } from '../../utils/customValidations';
 
 export class User {
     @IsString()

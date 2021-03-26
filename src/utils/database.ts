@@ -27,6 +27,7 @@ export function getDbInstance() {
                 password: dbConfig.password,
                 database: dbConfig.database,
             },
+            pool: { min: process.env.NODE_ENV !== 'test' ? 1 : 5 },
         });
     }
     return _connection;

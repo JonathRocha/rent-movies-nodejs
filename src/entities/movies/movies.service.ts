@@ -13,14 +13,24 @@ export default class MoviesService extends BaseService {
         this.historiesService = new HistoriesService();
     }
 
-    save(movie: Movie): Promise<MovieEntity> {
-        return this.db('movie').insert(movie).returning<MovieEntity>('*');
+    async save(movie: Movie): Promise<MovieEntity> {
+        try {
+            const [insertedMovie] = await this.db('movie')
+                .insert(movie)
+                .returning<MovieEntity[]>('*');
+            return insertedMovie;
+        } catch (error) {
+            if ('detail' in error && /already exists/.test(error.detail)) {
+                throw new HttpException(400, `Movie already registered.`);
+            }
+            throw error;
+        }
     }
 
     async findAll(limit: number, page: number = 1) {
         const [movies, count] = await Promise.all([
             this.db('movie')
-                .select<MovieEntity>('*')
+                .select<MovieEntity[]>('*')
                 .whereNull('deleted_at')
                 .offset(page * limit - limit)
                 .limit(limit ?? 10),

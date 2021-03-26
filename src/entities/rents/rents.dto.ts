@@ -6,7 +6,7 @@ import {
     Min,
     Validate,
 } from 'class-validator';
-import { IsNotPastDate } from 'utils/customValidations';
+import { IsNotPastDate } from '../../utils/customValidations';
 
 export class Rent {
     @IsInt()

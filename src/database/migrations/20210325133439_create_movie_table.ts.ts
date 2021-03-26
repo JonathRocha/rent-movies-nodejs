@@ -9,7 +9,7 @@ export async function up(knex: Knex): Promise<void> {
     if (!exists) {
         await knex.schema.createTable(tableName, (table) => {
             table.bigIncrements('id').primary();
-            table.string('name', 100).notNullable();
+            table.string('name', 100).notNullable().unique();
             table.string('genre', 100).notNullable();
             table.string('director', 100).notNullable();
             table.integer('quantity').notNullable().defaultTo(1);

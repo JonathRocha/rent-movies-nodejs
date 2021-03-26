@@ -63,25 +63,38 @@ export default class RentsService extends BaseService {
             throw new HttpException(400, 'Movie out of stock.');
         }
 
-        const transaction = await this.db.transaction();
-        try {
-            const [insertedRent] = await transaction('rent')
+        if (process.env.NODE_ENV !== 'test') {
+            const transaction = await this.db.transaction();
+            try {
+                const [insertedRent] = await transaction('rent')
+                    .insert(rent)
+                    .returning<RentEntity[]>('*');
+
+                await this.historiesService.create(
+                    {
+                        rent_id: insertedRent.id,
+                        action: 'rent',
+                    },
+                    transaction
+                );
+
+                transaction.commit();
+                return insertedRent;
+            } catch (error) {
+                transaction?.rollback();
+                throw error;
+            }
+        } else {
+            const [insertedRent] = await this.db('rent')
                 .insert(rent)
                 .returning<RentEntity[]>('*');
 
-            await this.historiesService.create(
-                {
-                    rent_id: insertedRent.id,
-                    action: 'rent',
-                },
-                transaction
-            );
+            await this.historiesService.create({
+                rent_id: insertedRent.id,
+                action: 'rent',
+            });
 
-            transaction.commit();
             return insertedRent;
-        } catch (error) {
-            transaction?.rollback();
-            throw error;
         }
     }
 
@@ -106,30 +119,47 @@ export default class RentsService extends BaseService {
             );
         }
 
-        const transaction = await this.db.transaction();
-        try {
+        if (process.env.NODE_ENV !== 'test') {
+            const transaction = await this.db.transaction();
+            try {
+                await Promise.all([
+                    transaction('rent')
+                        .update({
+                            return_date: DateTime.fromJSDate(rent.return_date)
+                                .plus({ days })
+                                .toJSDate(),
+                        })
+                        .where({ id }),
+                    this.historiesService.create(
+                        {
+                            rent_id: rent.id,
+                            action: 'renew',
+                        },
+                        transaction
+                    ),
+                ]);
+
+                transaction.commit();
+                return this.findById(id);
+            } catch (error) {
+                transaction?.rollback();
+                throw error;
+            }
+        } else {
             await Promise.all([
-                transaction('rent')
+                this.db('rent')
                     .update({
                         return_date: DateTime.fromJSDate(rent.return_date)
                             .plus({ days })
                             .toJSDate(),
                     })
                     .where({ id }),
-                this.historiesService.create(
-                    {
-                        rent_id: rent.id,
-                        action: 'renew',
-                    },
-                    transaction
-                ),
+                this.historiesService.create({
+                    rent_id: rent.id,
+                    action: 'renew',
+                }),
             ]);
-
-            transaction.commit();
             return this.findById(id);
-        } catch (error) {
-            transaction?.rollback();
-            throw error;
         }
     }
 
